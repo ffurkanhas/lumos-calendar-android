@@ -20,7 +20,7 @@
     <com.yuyakaido.android.couplescalendar.ui.CouplesCalendarView
         android:id="@+id/activity_main_couples_calendar_view"
         android:layout_width="match_parent"
-        android:layout_height="290dp">
+        android:layout_height="330dp">
     </com.yuyakaido.android.couplescalendar.ui.CouplesCalendarView>
 
     <LinearLayout
@@ -28,5 +28,11 @@
         android:layout_height="match_parent"
         android:background="@color/cc_event_orange_theme">
 
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/listView"/>
     </LinearLayout>
 </LinearLayout>

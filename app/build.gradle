@@ -29,4 +29,12 @@ dependencies {
 
     implementation 'com.yuyakaido.android:couples-calendar:0.5.0'
 
+    implementation 'com.android.support:design:27.1.1'
+
+    // https://mvnrepository.com/artifact/org.dmfs/lib-recur
+    implementation group: 'org.dmfs', name: 'lib-recur', version: '0.10.2'
+
+    implementation 'com.google.firebase:firebase-core:16.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
