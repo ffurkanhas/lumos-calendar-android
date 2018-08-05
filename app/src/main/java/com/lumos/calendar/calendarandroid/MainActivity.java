@@ -1,6 +1,5 @@
 package com.lumos.calendar.calendarandroid;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,13 +12,14 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.lumos.calendar.calendarandroid.util.EventListAdapter;
 import com.lumos.calendar.calendarandroid.util.FetchData;
@@ -35,11 +35,24 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
     private ListView mListView;
     public static ArrayList<JSONObject> eventsJsonObjects;
     public static ArrayList<SampleEvent> sampleEventList;
+    private Button addEventButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        addEventButton = findViewById(R.id.add_event_button);
+        addEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Display the selected item text on TextView
+                Intent activity = new Intent(MainActivity.this, EventFormActivity.class);
+                activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                MainActivity.this.startActivity(activity);
+            }
+        });
 
         CouplesCalendarView view = findViewById(R.id.activity_main_couples_calendar_view);
         mListView = findViewById(R.id.listView);
@@ -50,7 +63,19 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
                 SampleEvent selectedItem = (SampleEvent) parent.getItemAtPosition(position);
 
                 // Display the selected item text on TextView
-                Toast.makeText(MainActivity.this, selectedItem.getTitle(), Toast.LENGTH_SHORT).show();
+                Intent activity = new Intent(MainActivity.this, EventFormActivity.class);
+                activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Bundle b = new Bundle();
+                b.putInt("id", selectedItem.getId());
+                b.putString("title", selectedItem.getTitle());
+                b.putString("description", selectedItem.getDescription());
+                b.putString("recurring", selectedItem.getRecurring());
+                b.putString("reminder", selectedItem.getReminder());
+                b.putLong("start_time", selectedItem.getStartAt().getTime());
+                b.putLong("end_time", selectedItem.getEndAt().getTime());
+                activity.putExtras(b); //Put your id to your next Intent
+
+                MainActivity.this.startActivity(activity);
             }
         });
 
@@ -105,17 +130,23 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
                 temp.setEndAt(new DateTime(eventJson.get("end_time")).toDate());
                 temp.setReminder(eventJson.getString("reminder"));
                 temp.setEventColor(getResources().getColor(Theme.RED.getEventColorId()));
+                temp.setRecurring(eventJson.getString("recurring"));
                 if(!eventJson.isNull("recurring") && !eventJson.getString("recurring").equals("null")){
                     RecurrenceRule rule = new RecurrenceRule(eventJson.getString("recurring"));
 
                     org.dmfs.rfc5545.DateTime start = new org.dmfs.rfc5545.DateTime(new DateTime(eventJson.get("start_time")).getMillis());
+                    org.dmfs.rfc5545.DateTime end = new org.dmfs.rfc5545.DateTime(new DateTime(eventJson.get("end_time")).getMillis());
 
-                    RecurrenceRuleIterator it = rule.iterator(start);
+                    RecurrenceRuleIterator itStart = rule.iterator(start);
+                    RecurrenceRuleIterator itEnd = rule.iterator(end);
 
-                    while (it.hasNext()) {
-                        org.dmfs.rfc5545.DateTime nextInstance = it.nextDateTime();
+                    while (itStart.hasNext()) {
+                        org.dmfs.rfc5545.DateTime nextInstanceStart = itStart.nextDateTime();
+                        org.dmfs.rfc5545.DateTime nextInstanceEnd = itEnd.nextDateTime();
                         SampleEvent recurringEvent = (SampleEvent) temp.clone();
-                        recurringEvent.setStartAt(new DateTime(nextInstance.getTimestamp()).toDate());
+                        recurringEvent.setRecurring(eventJson.getString("recurring"));
+                        recurringEvent.setStartAt(new DateTime(nextInstanceStart.getTimestamp()).toDate());
+                        recurringEvent.setEndAt(new DateTime(nextInstanceEnd.getTimestamp()).toDate());
                         couplesCalendarEvents.add(recurringEvent);
                         sampleEventList.add(recurringEvent);
                     }

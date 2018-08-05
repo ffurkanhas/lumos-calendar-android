@@ -16,6 +16,7 @@ public class SampleEvent implements CouplesCalendarEvent, Cloneable {
     private Date mEndAt;
     private String mRRule;
     private String reminder;
+    private String recurring;
     private int mEventColor;
 
     public int getId() {
@@ -79,6 +80,14 @@ public class SampleEvent implements CouplesCalendarEvent, Cloneable {
 
     public void setEventColor(int eventColor) {
         mEventColor = eventColor;
+    }
+
+    public String getRecurring() {
+        return recurring;
+    }
+
+    public void setRecurring(String recurring) {
+        this.recurring = recurring;
     }
 
     @Override

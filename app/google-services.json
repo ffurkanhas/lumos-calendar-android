@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "479135818062",
+    "firebase_url": "https://lumos-calendar.firebaseio.com",
+    "project_id": "lumos-calendar",
+    "storage_bucket": "lumos-calendar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479135818062:android:e68217037d02e21c",
+        "android_client_info": {
+          "package_name": "com.lumos.calendar.calendarandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479135818062-sjhu5hq64fdg3mbubr5d7jjr4g1uv824.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAenUqMmzpQUboh_58RM7O9Fivpv1RmNZ4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
