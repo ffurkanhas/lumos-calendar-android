@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
                 temp.setReminder(eventJson.getString("reminder"));
                 temp.setEventColor(getResources().getColor(Theme.RED.getEventColorId()));
                 temp.setRecurring(eventJson.getString("recurring"));
-                if(!eventJson.isNull("recurring") && !eventJson.getString("recurring").equals("null")){
+                if(!eventJson.isNull("recurring") && !eventJson.getString("recurring").equals("null") && !eventJson.getString("recurring").equals("")){
                     RecurrenceRule rule = new RecurrenceRule(eventJson.getString("recurring"));
 
                     org.dmfs.rfc5545.DateTime start = new org.dmfs.rfc5545.DateTime(new DateTime(eventJson.get("start_time")).getMillis());

@@ -12,12 +12,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import org.apache.http.entity.StringEntity;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
@@ -35,7 +38,7 @@ public class EventFormActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_form);
 
-        JSONObject event = new JSONObject();
+        final JSONObject event = new JSONObject();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -51,64 +54,123 @@ public class EventFormActivity extends Activity {
         updateOrCreateEvent.setText("Add Event");
         deleteEvent.setVisibility(View.INVISIBLE);
 
+        updateOrCreateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    URL url = new URL(baseUrl);
+                    HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                    httpCon.setDoOutput(true);
+                    httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
+                    httpCon.setRequestMethod("POST");
+                    httpCon.setRequestProperty("Content-Type","application/json");
+                    JSONObject eventObject = new JSONObject();
+                    eventObject.put("title",title.getText().toString());
+                    eventObject.put("description", description.getText().toString());
+                    eventObject.put("recurring", recurring.getText().toString());
+                    eventObject.put("start_time", "2018-08-13T01:00:00.000Z");
+                    eventObject.put("end_time", "2018-08-13T01:00:00.000Z");
+                    eventObject.put("reminder", reminder.getText().toString());
+                    eventObject.put("user_id", 1);
+                    String json = eventObject.toString();
+
+                    byte[] outputInBytes = json.getBytes("UTF-8");
+                    OutputStream os = httpCon.getOutputStream();
+                    os.write( outputInBytes );
+                    os.close();
+
+                    int responseCode = httpCon.getResponseCode();
+                    System.out.println("response code: " + responseCode);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Intent activity = new Intent(EventFormActivity.this, MainActivity.class);
+                activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                EventFormActivity.this.startActivity(activity);
+            }
+        });
+
         try{ //if event will be added
             Bundle b = getIntent().getExtras();
-            updateOrCreateEvent.setText("Update Event");
-            deleteEvent.setVisibility(View.VISIBLE);
-            eventId = b.getInt("id");
+            if (!b.isEmpty()) {
+                System.out.println("okokok");
+                updateOrCreateEvent.setText("Update Event");
+                deleteEvent.setVisibility(View.VISIBLE);
+                eventId = b.getInt("id");
 
-            title.setText(b.getString("title"));
-            description.setText(b.getString("description"));
+                title.setText(b.getString("title"));
+                description.setText(b.getString("description"));
 
-            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss");
+                DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss");
 
-            DateTime jodaStartTime = new DateTime((b.getLong("start_time")));
+                DateTime jodaStartTime = new DateTime((b.getLong("start_time")));
 
-            start_time.setText(dtfOut.print(jodaStartTime));
+                start_time.setText(dtfOut.print(jodaStartTime));
 
-            recurring.setText(b.getString("recurring"));
-            reminder.setText(b.getString("reminder"));
+                recurring.setText(b.getString("recurring"));
+                reminder.setText(b.getString("reminder"));
 
-            updateOrCreateEvent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        URL url = new URL(baseUrl + "" + eventId);
-                        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-                        httpCon.setDoOutput(true);
-                        httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
-                        httpCon.setRequestMethod("DELETE");
-                        int responseCode = httpCon.getResponseCode();
-                        httpCon.connect();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                updateOrCreateEvent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            URL url = new URL(baseUrl + "" + eventId);
+                            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                            httpCon.setDoOutput(true);
+                            httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
+                            httpCon.setRequestMethod("PUT");
+                            httpCon.setRequestProperty("Content-Type","application/json");
+                            JSONObject eventObject = new JSONObject();
+                            eventObject.put("title",title.getText().toString());
+                            eventObject.put("description", description.getText().toString());
+                            eventObject.put("recurring", recurring.getText().toString());
+                            eventObject.put("start_time", "2018-08-13T01:00:00.000Z");
+                            eventObject.put("end_time", "2018-08-13T01:00:00.000Z");
+                            eventObject.put("reminder", reminder.getText().toString());
+                            eventObject.put("user_id", 1);
+                            String json = eventObject.toString();
+
+                            byte[] outputInBytes = json.getBytes("UTF-8");
+                            OutputStream os = httpCon.getOutputStream();
+                            os.write( outputInBytes );
+                            os.close();
+
+                            int responseCode = httpCon.getResponseCode();
+                            System.out.println("response code: " + responseCode);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Intent activity = new Intent(EventFormActivity.this, MainActivity.class);
+                        activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        EventFormActivity.this.startActivity(activity);
                     }
-                    Intent activity = new Intent(EventFormActivity.this, MainActivity.class);
-                    activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    EventFormActivity.this.startActivity(activity);
-                }
-            });
+                });
 
-            deleteEvent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    System.out.println("***id:" + eventId);
-                    try {
-                        URL url = new URL(baseUrl + "" + eventId);
-                        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-                        httpCon.setDoOutput(true);
-                        httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
-                        httpCon.setRequestMethod("DELETE");
-                        int responseCode = httpCon.getResponseCode();
-                        httpCon.connect();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                deleteEvent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        System.out.println("***id:" + eventId);
+                        try {
+                            URL url = new URL(baseUrl + "" + eventId);
+                            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+                            httpCon.setDoOutput(true);
+                            httpCon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
+                            httpCon.setRequestMethod("DELETE");
+                            int responseCode = httpCon.getResponseCode();
+                            httpCon.connect();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Intent activity = new Intent(EventFormActivity.this, MainActivity.class);
+                        activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        EventFormActivity.this.startActivity(activity);
                     }
-                    Intent activity = new Intent(EventFormActivity.this, MainActivity.class);
-                    activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    EventFormActivity.this.startActivity(activity);
-                }
-            });
+                });
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
