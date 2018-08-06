@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.lumos.calendar.calendarandroid.util.EventListAdapter;
 import com.lumos.calendar.calendarandroid.util.FetchData;
 import com.yuyakaido.android.couplescalendar.model.CouplesCalendarEvent;
@@ -35,7 +36,7 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
     private ListView mListView;
     public static ArrayList<JSONObject> eventsJsonObjects;
     public static ArrayList<SampleEvent> sampleEventList;
-    private Button addEventButton;
+    private Button addEventButton, searchButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,17 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
             public void onClick(View v) {
                 // Display the selected item text on TextView
                 Intent activity = new Intent(MainActivity.this, EventFormActivity.class);
+                activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                MainActivity.this.startActivity(activity);
+            }
+        });
+
+        searchButton = findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent activity = new Intent(MainActivity.this, SearchActivity.class);
                 activity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 MainActivity.this.startActivity(activity);
@@ -176,6 +188,18 @@ public class MainActivity extends Activity implements CouplesCalendarView.OnMont
             if(dateTimeSelected.getDayOfYear() == dateTimeEvent.getDayOfYear()
                     && dateTimeSelected.getDayOfMonth() == dateTimeEvent.getDayOfMonth()
                     && dateTimeSelected.getDayOfWeek() == dateTimeEvent.getDayOfWeek()){
+                sampleEvents.add(sampleEvent);
+            }
+        }
+
+        return sampleEvents;
+    }
+
+    public static ArrayList<SampleEvent> searchEvent(String key){
+        ArrayList<SampleEvent> sampleEvents = new ArrayList<>();
+
+        for(SampleEvent sampleEvent: sampleEventList){
+            if(sampleEvent.getDescription().toLowerCase().contains(key.toLowerCase()) || sampleEvent.getTitle().toLowerCase().contains(key.toLowerCase())) {
                 sampleEvents.add(sampleEvent);
             }
         }

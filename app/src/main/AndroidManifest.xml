@@ -26,6 +26,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.lumos.calendar.calendarandroid.SearchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
         <!-- [START firebase_service] -->
         <service
             android:name=".MyFirebaseMessagingService">
@@ -42,6 +48,11 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
+
+        <meta-data android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

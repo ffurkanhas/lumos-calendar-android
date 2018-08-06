@@ -29,8 +29,19 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:background="@color/cc_event_red_theme"
-            android:layout_marginLeft="260dp"
+            android:layout_marginLeft="200dp"
             android:text="+"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@color/cc_event_red_theme"
+            android:text="search"
             android:textColor="#fff" />
     </LinearLayout>
 
