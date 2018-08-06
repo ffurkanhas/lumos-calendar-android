@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.lumos.calendar.calendarandroid.util.EventListAdapter;
 import com.lumos.calendar.calendarandroid.util.FetchData;
 import com.yuyakaido.android.couplescalendar.model.CouplesCalendarEvent;

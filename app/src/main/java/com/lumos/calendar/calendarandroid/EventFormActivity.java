@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Date;
 
 public class EventFormActivity extends Activity {
 
@@ -65,8 +66,9 @@ public class EventFormActivity extends Activity {
                     eventObject.put("title",title.getText().toString());
                     eventObject.put("description", description.getText().toString());
                     eventObject.put("recurring", recurring.getText().toString());
-                    eventObject.put("start_time", "2018-08-13T01:00:00.000Z");
-                    eventObject.put("end_time", "2018-08-13T01:00:00.000Z");
+                    DateTime date = new DateTime(startTimeDate + startTimeClock);
+                    eventObject.put("start_time", date.toString());
+                    eventObject.put("end_time", date.toString());
                     eventObject.put("reminder", reminder.getText().toString());
                     eventObject.put("user_id", 1);
                     String json = eventObject.toString();
@@ -108,7 +110,6 @@ public class EventFormActivity extends Activity {
 
                 recurring.setText(b.getString("recurring"));
                 reminder.setText(b.getString("reminder"));
-
                 updateOrCreateEvent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -123,8 +124,9 @@ public class EventFormActivity extends Activity {
                             eventObject.put("title",title.getText().toString());
                             eventObject.put("description", description.getText().toString());
                             eventObject.put("recurring", recurring.getText().toString());
-                            eventObject.put("start_time", "2018-08-13T01:00:00.000Z");
-                            eventObject.put("end_time", "2018-08-13T01:00:00.000Z");
+                            DateTime date = new DateTime(startTimeDate + startTimeClock);
+                            eventObject.put("start_time", date.toString());
+                            eventObject.put("end_time", date.toString());
                             eventObject.put("reminder", reminder.getText().toString());
                             eventObject.put("user_id", 1);
                             String json = eventObject.toString();
@@ -192,7 +194,7 @@ public class EventFormActivity extends Activity {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay,
                                                   int minute) {
-                                startTimeClock = hourOfDay + ":" + minute;
+                                startTimeClock = "T" + hourOfDay + ":" + minute + ":00Z";
                                 start_time.setText(startTimeDate + " " +  startTimeClock);
                             }
                         }, hour, minute, false);
@@ -202,8 +204,22 @@ public class EventFormActivity extends Activity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                String monthString, dayString;
                                 month += 1;
-                                startTimeDate = dayOfMonth + "/" + month + "/" + year;
+                                if(month < 10){
+                                    monthString = "0" + month;
+                                }
+                                else{
+                                    monthString = String.valueOf(month);
+                                }
+                                if(dayOfMonth < 10){
+
+                                    dayString  = "0" + dayOfMonth ;
+                                }
+                                else{
+                                    dayString = String.valueOf(dayOfMonth);
+                                }
+                                startTimeDate = year + "-" + monthString + "-" + dayString;
                             }
                         }, yil, ay, gun);
 
